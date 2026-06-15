@@ -4,12 +4,9 @@ const { openDb } = require('./database');
 async function popularBanco() {
     const db = await openDb();
     
-    console.log("🚀 Populando 10 postos de saúde reais de Palmas-TO...");
-    
-    // Deletamos para não duplicar IDs ou dar conflito ao rodar novamente
-    await db.run("DELETE FROM postos"); 
-
-    await db.run(`INSERT INTO postos (id_posto, nome_posto, endereco, horario_funcionamento) VALUES 
+    // O INSERT OR IGNORE garante que o banco apenas insere se o ID não existir.
+    // Se já existir, ele ignora silenciosamente sem duplicar nada.
+    await db.run(`INSERT OR IGNORE INTO postos (id_posto, nome_posto, endereco, horario_funcionamento) VALUES 
         (1, 'USF 307 Norte (José Luiz Otaviani)', 'Arno 33 (307 Norte), Alameda 4, APM', '07:00 às 17:00'),
         (2, 'USF 403 Norte', 'Arno 41 (403 Norte), Alameda 1, Lote 7', '07:00 às 17:00'),
         (3, 'USF 508 Norte (Arne 64)', 'Arne 64 (508 Norte), Alameda 11, APM 49', '07:00 às 19:00'),
@@ -22,21 +19,15 @@ async function popularBanco() {
         (10, 'USF Jardim Aureny III (Laurides Lima)', 'Jardim Aureny III, Quadra 15, Rua 2', '07:00 às 22:00')
     `);
 
-    console.log("🚀 Populando catálogo de vacinas...");
-    
-    await db.run("DELETE FROM vacinas");
-
-    await db.run(`INSERT INTO vacinas (id_vacina, nome_vacina, tipo, descricao, doses_necessarias) VALUES 
+    await db.run(`INSERT OR IGNORE INTO vacinas (id_vacina, nome_vacina, tipo, descricao, doses_necessarias) VALUES 
         (1, 'Antirrábica', 'PET', 'Vacina anual contra a raiva para cães e gatos', 1),
         (2, 'Quádrupla Felina (V4)', 'PET', 'Protege gatos contra panleucopenia, calicivirose, rinotraqueíte e clamidiose', 2),
         (3, 'Tríplice Viral', 'HUMANA', 'Protege contra Sarampo, Caxumba e Rubéola', 2),
         (4, 'Influenza (Gripe)', 'HUMANA', 'Vacina anual de proteção sazonal contra a gripe', 1)
     `);
 
-    console.log("✅ Banco de dados preenchido com dados reais de Palmas com sucesso!");
+    console.log("🌱 Carga inicial (Seed) verificada e atualizada de forma automática!");
 }
 
-// Executa se o arquivo for chamado diretamente no terminal
-if (require.main === module) {
-    popularBanco();
-}
+// Em vez de rodar direto, exportamos a função para o servidor poder acioná-la
+module.exports = popularBanco;
