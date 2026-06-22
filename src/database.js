@@ -12,10 +12,11 @@ async function openDb() {
 async function initDb() {
     const db = await openDb();
 
-    // Cria as tabelas APENAS se elas não existirem
+    // Habilita chaves estrangeiras e cria tabelas bem relacionadas
     await db.exec(`
         PRAGMA foreign_keys = ON;
 
+        -- 1. USUÁRIOS
         CREATE TABLE IF NOT EXISTS usuarios (
             id_usuario INTEGER PRIMARY KEY AUTOINCREMENT,
             nome TEXT NOT NULL,
@@ -24,24 +25,27 @@ async function initDb() {
             is_admin INTEGER DEFAULT 0
         );
 
+        -- 2. PETS (Conversa diretamente com donos e valida espécie)
         CREATE TABLE IF NOT EXISTS pets (
             id_pet INTEGER PRIMARY KEY AUTOINCREMENT,
             id_dono INTEGER NOT NULL,
             nome TEXT NOT NULL,
-            especie TEXT NOT NULL,
+            especie TEXT NOT NULL CHECK(especie IN ('Cachorro', 'Gato')), 
             raca TEXT,
             data_nascimento TEXT,
             FOREIGN KEY (id_dono) REFERENCES usuarios(id_usuario) ON DELETE CASCADE
         );
 
+        -- 3. DICIONÁRIO DE VACINAS (Catálogo centralizado)
         CREATE TABLE IF NOT EXISTS vacinas (
             id_vacina INTEGER PRIMARY KEY AUTOINCREMENT,
             nome_vacina TEXT NOT NULL,
-            tipo TEXT NOT NULL,
+            tipo TEXT NOT NULL CHECK(tipo IN ('Humano', 'Cachorro', 'Gato')), -- Amarração do público da vacina
             descricao TEXT,
             doses_necessarias INTEGER DEFAULT 1
         );
 
+        -- 4. POSTOS DE SAÚDE
         CREATE TABLE IF NOT EXISTS postos (
             id_posto INTEGER PRIMARY KEY AUTOINCREMENT,
             nome_posto TEXT NOT NULL,
@@ -52,16 +56,39 @@ async function initDb() {
             alerta_instabilidade INTEGER DEFAULT 0
         );
 
+        -- 5. ESTOQUE DOS POSTOS (N:M entre Postos e Vacinas)
+        CREATE TABLE IF NOT EXISTS estoque_postos (
+            id_posto INTEGER NOT NULL,
+            id_vacina INTEGER NOT NULL,
+            quantidade INTEGER DEFAULT 0,
+            PRIMARY KEY (id_posto, id_vacina),
+            FOREIGN KEY (id_posto) REFERENCES postos(id_posto) ON DELETE CASCADE,
+            FOREIGN KEY (id_vacina) REFERENCES vacinas(id_vacina) ON DELETE CASCADE
+        );
+
+        -- 6. CAMPANHAS (Agora vinculada a uma vacina específica do catálogo)
         CREATE TABLE IF NOT EXISTS campanhas (
             id_campanha INTEGER PRIMARY KEY AUTOINCREMENT,
+            id_vacina INTEGER NOT NULL, -- Essencial para o sistema saber o que será aplicado
             titulo TEXT NOT NULL,
-            publico TEXT,
+            publico TEXT NOT NULL CHECK(publico IN ('Humano', 'Cachorro', 'Gato')),
             periodo TEXT,
             descricao TEXT,
             imagem_url TEXT,
-            destaque INTEGER DEFAULT 0
+            destaque INTEGER DEFAULT 0,
+            FOREIGN KEY (id_vacina) REFERENCES vacinas(id_vacina) ON DELETE CASCADE
         );
 
+        -- 7. CAMPANHA_POSTOS (Tabela Pivô N:M - Ajustada com as chaves corretas id_campanha e id_posto)
+        CREATE TABLE IF NOT EXISTS campanha_postos (
+            id_campanha INTEGER NOT NULL,
+            id_posto INTEGER NOT NULL,
+            PRIMARY KEY (id_campanha, id_posto),
+            FOREIGN KEY (id_campanha) REFERENCES campanhas(id_campanha) ON DELETE CASCADE,
+            FOREIGN KEY (id_posto) REFERENCES postos(id_posto) ON DELETE CASCADE
+        );
+
+        -- 8. HISTÓRICO DE VACINAÇÃO (Aplicações já realizadas)
         CREATE TABLE IF NOT EXISTS historico_vacinacao (
             id_historico INTEGER PRIMARY KEY AUTOINCREMENT,
             id_usuario INTEGER NOT NULL,
@@ -73,9 +100,25 @@ async function initDb() {
             FOREIGN KEY (id_pet) REFERENCES pets(id_pet) ON DELETE CASCADE,
             FOREIGN KEY (id_vacina) REFERENCES vacinas(id_vacina) ON DELETE CASCADE
         );
+
+        -- 9. INTENÇÕES DE VACINAÇÃO (Onde tudo se junta de forma inteligente)
+        CREATE TABLE IF NOT EXISTS intencoes_vacinacao (
+            id_intencao INTEGER PRIMARY KEY AUTOINCREMENT,
+            id_usuario INTEGER NOT NULL,
+            id_posto INTEGER NOT NULL,       -- Onde o cidadão escolheu ir buscar a dose
+            id_vacina INTEGER NOT NULL,      -- Qual vacina ele deseja
+            id_campanha INTEGER,             -- NULL se for vacinação de rotina no posto; Preenchido se veio de uma campanha
+            id_pet INTEGER,                  -- NULL se for para o próprio Humano logado
+            data_registro TEXT NOT NULL,
+            FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario) ON DELETE CASCADE,
+            FOREIGN KEY (id_posto) REFERENCES postos(id_posto) ON DELETE CASCADE,
+            FOREIGN KEY (id_vacina) REFERENCES vacinas(id_vacina) ON DELETE CASCADE,
+            FOREIGN KEY (id_campanha) REFERENCES campanhas(id_campanha) ON DELETE CASCADE,
+            FOREIGN KEY (id_pet) REFERENCES pets(id_pet) ON DELETE CASCADE
+        );
     `);
 
-    console.log("📐 Estrutura do banco de dados verificada/criada!");
+    console.log("📐 Estrutura do banco de dados verificada/criada com relacionamentos estritos!");
     return db;
 }
 
