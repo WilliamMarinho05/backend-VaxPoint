@@ -46,17 +46,20 @@ async function initDb() {
             id_posto INTEGER PRIMARY KEY AUTOINCREMENT,
             nome_posto TEXT NOT NULL,
             endereco TEXT NOT NULL,
-            horario_funcionamento TEXT NOT NULL
+            horario_funcionamento TEXT NOT NULL,
+            lat REAL,
+            lng REAL,
+            alerta_instabilidade INTEGER DEFAULT 0
         );
 
         CREATE TABLE IF NOT EXISTS campanhas (
             id_campanha INTEGER PRIMARY KEY AUTOINCREMENT,
             titulo TEXT NOT NULL,
+            publico TEXT,
+            periodo TEXT,
             descricao TEXT,
-            data_inicio TEXT NOT NULL,
-            data_fim TEXT NOT NULL,
-            id_posto INTEGER,
-            FOREIGN KEY (id_posto) REFERENCES postos(id_posto) ON DELETE SET NULL
+            imagem_url TEXT,
+            destaque INTEGER DEFAULT 0
         );
 
         CREATE TABLE IF NOT EXISTS historico_vacinacao (
