@@ -32,10 +32,10 @@ async function iniciarSistema() {
         // Terceiro: Abre a porta do servidor para o Postman / Frontend
         const PORT = process.env.PORT || 3000;
         app.listen(PORT, () => {
-            console.log(`🚀 Servidor VaxPoint rodando na porta ${PORT}`);
+            console.log(`Servidor VaxPoint rodando na porta ${PORT}`);
         });
     } catch (error) {
-        console.error("❌ Erro crítico ao iniciar o sistema:", error);
+        console.error("Erro ao iniciar o sistema:", error);
     }
 }
 

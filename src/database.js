@@ -62,17 +62,33 @@ async function initDb() {
         CREATE TABLE IF NOT EXISTS historico_vacinacao (
             id_historico INTEGER PRIMARY KEY AUTOINCREMENT,
             id_usuario INTEGER NOT NULL,
-            id_pet INTEGER, 
+            id_pet INTEGER,
             id_vacina INTEGER NOT NULL,
+            id_posto INTEGER NOT NULL,
             data_prevista TEXT NOT NULL,
-            status TEXT NOT NULL DEFAULT 'CONCLUIDA',
-            FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario) ON DELETE CASCADE,
-            FOREIGN KEY (id_pet) REFERENCES pets(id_pet) ON DELETE CASCADE,
-            FOREIGN KEY (id_vacina) REFERENCES vacinas(id_vacina) ON DELETE CASCADE
+            data_aplicacao TEXT,
+            dose_atual INTEGER DEFAULT 1,
+            status TEXT NOT NULL DEFAULT 'PLANEJADA',
+            FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario),
+            FOREIGN KEY (id_pet) REFERENCES pets(id_pet),
+            FOREIGN KEY (id_vacina) REFERENCES vacinas(id_vacina),
+            FOREIGN KEY (id_posto) REFERENCES postos(id_posto)
+        );
+
+        // Tabela para controle de estoque de vacinas nos postos - Joaby
+
+        CREATE TABLE IF NOT EXISTS estoque_vacinas (
+            id_estoque INTEGER PRIMARY KEY AUTOINCREMENT,
+            id_posto INTEGER NOT NULL,
+            id_vacina INTEGER NOT NULL,
+            quantidade_disponivel INTEGER DEFAULT 0,
+            data_atualizacao TEXT NOT NULL,
+            FOREIGN KEY (id_posto) REFERENCES postos(id_posto),
+            FOREIGN KEY (id_vacina) REFERENCES vacinas(id_vacina)
         );
     `);
 
-    console.log("📐 Estrutura do banco de dados verificada/criada!");
+    console.log("Estrutura do banco de dados verificada/criada!");
     return db;
 }
 
