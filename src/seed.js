@@ -84,6 +84,9 @@ async function popularBanco() {
     // ==========================================
     // 4. ESTOQUE DOS POSTOS FIXOS (Apenas Vacinas Humanas)
     // ==========================================
+    // ==========================================
+    // 4. ESTOQUE DOS POSTOS FIXOS (Apenas Vacinas Humanas)
+    // ==========================================
     await db.run(`
         INSERT INTO estoque_postos (id_posto, id_vacina, quantidade) VALUES
         (1, 3, 50),  (1, 4, 120),
@@ -107,10 +110,29 @@ async function popularBanco() {
     // 5. VÍNCULO DE QUAIS POSTOS PARTICIPAM DE QUAIS CAMPANHAS
     // ==========================================
     await db.run(`
-        INSERT INTO campanha_postos (id_campanha, id_posto) VALUES
-        (1, 1), (1, 2), (1, 6), (1, 11), (1, 13), -- Campanha de Cães nos postos 1, 2, 6, 11 e 13
-        (2, 1), (2, 2), (2, 3), (2, 4), (2, 5), (2, 6), (2, 7), (2, 8), (2, 9), (2, 10), (2, 11), (2, 12), (2, 13), (2, 14), (2, 15), -- Gripe em TODOS os 15
-        (3, 3), (3, 4), (3, 7), (3, 12), (3, 15)  -- Campanha de Gatos nos postos 3, 4, 7, 12 e 15
+        INSERT OR IGNORE INTO campanha_postos (id_campanha, id_posto) VALUES
+        (1, 1), (1, 2), (1, 6), (1, 11), (1, 13),
+        (2, 1), (2, 2), (2, 3), (2, 4), (2, 5), (2, 6), (2, 7), (2, 8), (2, 9), (2, 10), (2, 11), (2, 12), (2, 13), (2, 14), (2, 15),
+        (3, 3), (3, 4), (3, 7), (3, 12), (3, 15)
+    `);
+
+    // ==========================================
+    // 6. TABELA DE RAÇAS (Sintaxe corrigida)
+    // ==========================================
+    await db.run(`
+        INSERT OR IGNORE INTO racas (id_raca, nome_raca, especie) VALUES
+        -- Cachorros
+        (1, 'Sem Raça Definida (SRD)', 'Cachorro'),
+        (2, 'Vira-lata', 'Cachorro'),
+        (3, 'Poodle', 'Cachorro'),
+        (4, 'Pinscher', 'Cachorro'),
+        (5, 'Labrador', 'Cachorro'),
+        (6, 'Golden Retriever', 'Cachorro'),
+        -- Gatos
+        (7, 'Sem Raça Definida (SRD)', 'Gato'),
+        (8, 'Persa', 'Gato'),
+        (9, 'Siamês', 'Gato'),
+        (10, 'Angorá', 'Gato')
     `);
 
     console.log("🌱 Carga inicial (Seed) atualizada e todos os 15 postos com lat/lng foram restaurados!");

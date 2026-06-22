@@ -25,17 +25,6 @@ async function initDb() {
             is_admin INTEGER DEFAULT 0
         );
 
-        -- 2. PETS (Conversa diretamente com donos e valida espécie)
-        CREATE TABLE IF NOT EXISTS pets (
-            id_pet INTEGER PRIMARY KEY AUTOINCREMENT,
-            id_dono INTEGER NOT NULL,
-            nome TEXT NOT NULL,
-            especie TEXT NOT NULL CHECK(especie IN ('Cachorro', 'Gato')), 
-            raca TEXT,
-            data_nascimento TEXT,
-            FOREIGN KEY (id_dono) REFERENCES usuarios(id_usuario) ON DELETE CASCADE
-        );
-
         -- 3. DICIONÁRIO DE VACINAS (Catálogo centralizado)
         CREATE TABLE IF NOT EXISTS vacinas (
             id_vacina INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -115,6 +104,42 @@ async function initDb() {
             FOREIGN KEY (id_vacina) REFERENCES vacinas(id_vacina) ON DELETE CASCADE,
             FOREIGN KEY (id_campanha) REFERENCES campanhas(id_campanha) ON DELETE CASCADE,
             FOREIGN KEY (id_pet) REFERENCES pets(id_pet) ON DELETE CASCADE
+        );
+
+        -- 1. TABELA DE RAÇAS FIXAS
+        CREATE TABLE IF NOT EXISTS racas (
+            id_raca INTEGER PRIMARY KEY AUTOINCREMENT,
+            nome_raca TEXT NOT NULL,
+            especie TEXT NOT NULL CHECK(especie IN ('Cachorro', 'Gato'))
+        );
+
+        -- 2. TABELA DE PETS ATUALIZADA
+        CREATE TABLE IF NOT EXISTS pets (
+            id_pet INTEGER PRIMARY KEY AUTOINCREMENT,
+            nome TEXT NOT NULL,
+            especie TEXT NOT NULL CHECK(especie IN ('Cachorro', 'Gato')),
+            id_raca INTEGER NOT NULL,
+            porte TEXT NOT NULL CHECK(porte IN ('Pequeno', 'Médio', 'Grande')),
+            peso REAL NOT NULL,
+            sexo TEXT NOT NULL CHECK(sexo IN ('Macho', 'Fêmea')),
+            data_nascimento TEXT NOT NULL, -- Guardado como YYYY-MM
+            numero_microchip TEXT,         -- Opcional
+            foto_url TEXT,                 -- String base64 ou link de imagem
+            id_usuario INTEGER,            -- Dono do pet (se houver login)
+            FOREIGN KEY (id_raca) REFERENCES racas(id_raca)
+        );
+
+        -- 3. HISTÓRICO REAL DE VACINAÇÃO (A união perfeita!)
+        CREATE TABLE IF NOT EXISTS historico_vacinas_pet (
+            id_historico INTEGER PRIMARY KEY AUTOINCREMENT,
+            id_pet INTEGER NOT NULL,
+            id_vacina INTEGER NOT NULL,
+            id_posto INTEGER NOT NULL,
+            data_aplicacao TEXT NOT NULL,
+            status TEXT NOT NULL DEFAULT 'Aplicada',
+            FOREIGN KEY (id_pet) REFERENCES pets(id_pet) ON DELETE CASCADE,
+            FOREIGN KEY (id_vacina) REFERENCES vacinas(id_vacina),
+            FOREIGN KEY (id_posto) REFERENCES postos(id_posto)
         );
     `);
 
