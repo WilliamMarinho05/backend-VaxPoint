@@ -4,7 +4,7 @@ const router = express.Router();
 const { openDb } = require('../database');
 
 // =======================================================
-// BUSCAR TODAS AS RAÇAS DO BANCO DE DADOS
+// 1. BUSCAR TODAS AS RAÇAS (DEVE FICAR NO TOPO)
 // GET: /api/pets/racas
 // =======================================================
 router.get('/racas', async (req, res) => {
@@ -19,22 +19,19 @@ router.get('/racas', async (req, res) => {
 });
 
 // =======================================================
-// LISTAR PETS (Usando a coluna correta id_usuario)
-// GET: /api/pets
+// 2. LISTAR PETS FILTRADOS PELO DONO
+// GET: /api/pets/usuario/:idUsuario
 // =======================================================
-router.get('/', async (req, res) => {
-    // Como o login não está integrado, assumimos temporariamente o usuário ID 1
-    const id_usuario = 1; 
-
+router.get('/usuario/:idUsuario', async (req, res) => {
+    const { idUsuario } = req.params;
     try {
         const db = await openDb();
-        // Traz as informações do pet junto com o nome textual da raça
         const pets = await db.all(`
             SELECT p.*, r.nome_raca 
             FROM pets p
             LEFT JOIN racas r ON p.id_raca = r.id_raca
             WHERE p.id_usuario = ?
-        `, [id_usuario]);
+        `, [idUsuario]);
         
         res.json(pets);
     } catch (error) {
@@ -44,16 +41,19 @@ router.get('/', async (req, res) => {
 });
 
 // =======================================================
-// CADASTRAR PET (Usando a coluna correta id_usuario)
+// 3. CADASTRAR PET COM O DONO CORRETO
 // POST: /api/pets
 // =======================================================
 router.post('/', async (req, res) => {
     const { 
+        id_usuario,
         nome, especie, id_raca, porte, peso, sexo, 
         data_nascimento, numero_microchip, foto_url 
     } = req.body;
-    
-    const id_usuario = 1; // Temporário até integrar o Login
+
+    if (!id_usuario) {
+        return res.status(400).json({ success: false, message: "ID do usuário não fornecido." });
+    }
 
     let especieFormatada = especie;
     if (especie.toLowerCase().includes('cão') || especie.toLowerCase().includes('cachorro')) especieFormatada = 'Cachorro';
@@ -63,14 +63,15 @@ router.post('/', async (req, res) => {
         const db = await openDb();
         const result = await db.run(`
             INSERT INTO pets (
-                id_usuario, nome, especie, id_raca, porte, peso, sexo, 
-                data_nascimento, numero_microchip, foto_url
+                nome, especie, id_raca, porte, peso, sexo, 
+                data_nascimento, numero_microchip, foto_url, id_usuario
             ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
             [
-                id_usuario, nome, especieFormatada, id_raca, porte, peso, sexo, 
-                data_nascimento, numero_microchip, foto_url
+                nome, especieFormatada, parseInt(id_raca), porte, parseFloat(peso), sexo, 
+                data_nascimento, numero_microchip, foto_url, parseInt(id_usuario)
             ]
         );
+        
         res.status(201).json({ success: true, id_pet: result.lastID });
     } catch (error) {
         console.error("Erro ao cadastrar pet:", error);
@@ -79,7 +80,7 @@ router.post('/', async (req, res) => {
 });
 
 // =======================================================
-// ATUALIZAR PET
+// 4. ATUALIZAR PET
 // PUT: /api/pets/:idPet
 // =======================================================
 router.put('/:idPet', async (req, res) => {
@@ -105,7 +106,7 @@ router.put('/:idPet', async (req, res) => {
                 data_nascimento, numero_microchip, foto_url, idPet
             ]
         );
-        res.json({ success: true, message: "Pet updated successfully!" });
+        res.json({ success: true, message: "Pet atualizado com sucesso." });
     } catch (error) {
         console.error("Erro ao atualizar pet:", error);
         res.status(500).json({ success: false, message: "Erro ao atualizar dados do pet." });
@@ -113,7 +114,7 @@ router.put('/:idPet', async (req, res) => {
 });
 
 // =======================================================
-// DELETAR PET
+// 5. DELETAR PET
 // DELETE: /api/pets/:idPet
 // =======================================================
 router.delete('/:idPet', async (req, res) => {

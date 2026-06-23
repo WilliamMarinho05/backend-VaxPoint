@@ -3,17 +3,21 @@ const sqlite3 = require('sqlite3').verbose();
 const { open } = require('sqlite');
 
 async function openDb() {
-    return open({
+    // 1. Faltava o 'await' aqui!
+    const db = await open({
         filename: './database.db',
         driver: sqlite3.Database
     });
+
+    await db.exec('PRAGMA foreign_keys = ON;');
+    return db;
 }
 
 async function initDb() {
-    const db = await openDb();
+    // 2. Faltava essa linha que sumiu!
+    const db = await openDb(); 
 
     await db.exec(`
-        PRAGMA foreign_keys = ON;
 
         -- 1. USUÁRIOS
         CREATE TABLE IF NOT EXISTS usuarios (

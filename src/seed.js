@@ -25,7 +25,7 @@ async function popularBanco() {
         // ==========================================
         console.log("🏥 Inserindo postos de saúde...");
         await db.run(`
-            INSERT INTO postos 
+            INSERT OR IGNORE INTO postos 
             (id_posto, nome_posto, endereco, horario_funcionamento, lat, lng, alerta_instabilidade)
             VALUES 
             (1, 'USF 307 Norte (José Luiz Otaviani)', 'Arno 33, 307 Norte, Palmas - TO', '07:00 às 18:00', -10.16720890434086, -48.35150063048562, 0),
@@ -50,7 +50,7 @@ async function popularBanco() {
         // ==========================================
         console.log("💉 Inserindo catálogo de vacinas...");
         await db.run(`
-            INSERT INTO vacinas 
+            INSERT OR IGNORE INTO vacinas 
             (id_vacina, nome_vacina, tipo, descricao, doses_necessarias) 
             VALUES 
             (1, 'Antirrábica', 'Cachorro', 'Vacina anual contra a raiva para cães e gatos', 1),
@@ -64,7 +64,7 @@ async function popularBanco() {
         // ==========================================
         console.log("📢 Inserindo campanhas de imunização...");
         await db.run(`
-            INSERT INTO campanhas
+            INSERT OR IGNORE INTO campanhas
             (id_campanha, id_vacina, titulo, publico, periodo, descricao, imagem_url, destaque)
             VALUES
             (1, 1, 'Campanha Antirrábica Cães 2026', 'Cachorro', '01 de Junho a 30 de Junho', 'Proteja o seu melhor amigo contra a raiva!', 'https://images.unsplash.com/photo-1581888227599-779811939961?auto=format&fit=crop&w=1200&q=80', 0),
@@ -77,7 +77,7 @@ async function popularBanco() {
         // ==========================================
         console.log("📦 Abastecendo estoques das UBS...");
         await db.run(`
-            INSERT INTO estoque_postos (id_posto, id_vacina, quantidade) VALUES
+            INSERT OR IGNORE INTO estoque_postos (id_posto, id_vacina, quantidade) VALUES
             (1, 3, 50),  (1, 4, 120),
             (2, 3, 30),  (2, 4, 80),
             (3, 3, 15),  (3, 4, 200),
@@ -100,7 +100,7 @@ async function popularBanco() {
         // ==========================================
         console.log("🔗 Vinculando postos às campanhas...");
         await db.run(`
-            INSERT INTO campanha_postos (id_campanha, id_posto) VALUES
+            INSERT OR IGNORE INTO campanha_postos (id_campanha, id_posto) VALUES
             (1, 1), (1, 2), (1, 6), (1, 11), (1, 13),
             (2, 1), (2, 2), (2, 3), (2, 4), (2, 5), (2, 6), (2, 7), (2, 8), (2, 9), (2, 10), (2, 11), (2, 12), (2, 13), (2, 14), (2, 15),
             (3, 3), (3, 4), (3, 7), (3, 12), (3, 15)
@@ -111,7 +111,7 @@ async function popularBanco() {
         // ==========================================
         console.log("🧬 Inserindo catálogo de raças...");
         await db.run(`
-            INSERT INTO racas (id_raca, nome_raca, especie) VALUES
+            INSERT OR IGNORE INTO racas (id_raca, nome_raca, especie) VALUES
             (1, 'Sem Raça Definida (SRD)', 'Cachorro'),
             (2, 'Vira-lata', 'Cachorro'),
             (3, 'Poodle', 'Cachorro'),
@@ -132,13 +132,13 @@ async function popularBanco() {
 
         // Administrador
         await db.run(`
-            INSERT INTO usuarios (id_usuario, nome, email, senha, data_nascimento, sexo, is_admin)
+            INSERT OR IGNORE INTO usuarios (id_usuario, nome, email, senha, data_nascimento, sexo, is_admin)
             VALUES (1, 'admin', 'admin@vaxpoint.com', ?, '1985-06', 'Homem', 1)
         `, [senhaHash]);
 
         // Usuário comum
         const resUser = await db.run(`
-            INSERT INTO usuarios (nome, email, senha, data_nascimento, sexo, is_admin)
+            INSERT OR IGNORE INTO usuarios (nome, email, senha, data_nascimento, sexo, is_admin)
             VALUES ('Maria Clara', 'xxx@gmail.com', ?, '2002-04', 'Mulher', 0)
         `, [senhaHash]);
         const idUsuario = resUser.lastID;
@@ -148,7 +148,7 @@ async function popularBanco() {
         // ==========================================
         console.log("🐶 Cadastrando pet vinculado à Maria Clara...");
         const resPet = await db.run(`
-            INSERT INTO pets (nome, especie, id_raca, porte, peso, sexo, data_nascimento, numero_microchip, foto_url, id_usuario)
+            INSERT OR IGNORE INTO pets (nome, especie, id_raca, porte, peso, sexo, data_nascimento, numero_microchip, foto_url, id_usuario)
             VALUES ('Pipoca', 'Cachorro', 2, 'Médio', 12.5, 'Macho', '2023-08', '900111000222', null, ?)
         `, [idUsuario]);
         const idPet = resPet.lastID;
@@ -159,7 +159,7 @@ async function popularBanco() {
         console.log("📊 Gerando históricos de aplicações humana...");
         // Removido o campo "id_pet" daqui, pois sua tabela historico_vacinacao não possui essa coluna física
         await db.run(`
-            INSERT INTO historico_vacinacao (id_usuario, id_vacina, data_prevista, status)
+            INSERT OR IGNORE INTO historico_vacinacao (id_usuario, id_vacina, data_prevista, status)
             VALUES (?, 3, '2025-01-15', 'CONCLUIDA')
         `, [idUsuario]);
 
@@ -168,7 +168,7 @@ async function popularBanco() {
         // ==========================================
         console.log("🐱 Gerando históricos de aplicações pet...");
         await db.run(`
-            INSERT INTO historico_vacinas_pet (id_pet, id_vacina, id_posto, data_aplicacao, status)
+            INSERT OR IGNORE INTO historico_vacinas_pet (id_pet, id_vacina, id_posto, data_aplicacao, status)
             VALUES (?, 1, 1, '2025-10-20', 'Aplicada')
         `, [idPet]);
 
@@ -177,7 +177,7 @@ async function popularBanco() {
         // ==========================================
         console.log("🗓️ Criando intenção ativa...");
         await db.run(`
-            INSERT INTO intencoes_vacinacao (id_usuario, id_posto, id_vacina, id_campanha, id_pet, data_registro)
+            INSERT OR IGNORE INTO intencoes_vacinacao (id_usuario, id_posto, id_vacina, id_campanha, id_pet, data_registro)
             VALUES (?, 1, 1, 1, ?, '2026-06-22')
         `, [idUsuario, idPet]);
 
@@ -186,8 +186,6 @@ async function popularBanco() {
 
     } catch (error) {
         console.error("❌ Erro ao rodar o seed:", error);
-    } finally {
-        await db.close();
     }
 }
 
