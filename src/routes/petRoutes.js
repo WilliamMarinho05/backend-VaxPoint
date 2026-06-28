@@ -129,4 +129,32 @@ router.delete('/:idPet', async (req, res) => {
     }
 });
 
+// =======================================================
+// 6. BUSCAR HISTÓRICO DE VACINAS DE UM PET ESPECÍFICO
+// GET: /api/pets/historico/:idPet
+// =======================================================
+router.get('/historico/:idPet', async (req, res) => {
+    const { idPet } = req.params;
+    try {
+        const db = await openDb();
+        const historico = await db.all(`
+            SELECT 
+                h.id_historico, 
+                h.data_aplicacao,  -- Nome real da coluna de data
+                h.status,
+                v.nome_vacina, 
+                v.tipo
+            FROM historico_vacinas_pet h -- Nome real da tabela do seu banco
+            JOIN vacinas v ON h.id_vacina = v.id_vacina
+            WHERE h.id_pet = ?
+            ORDER BY h.data_aplicacao DESC
+        `, [idPet]);
+        
+        res.json(historico);
+    } catch (error) {
+        console.error("Erro ao buscar histórico do pet:", error);
+        res.status(500).json({ success: false, message: "Erro ao buscar histórico do pet." });
+    }
+});
+
 module.exports = router;
