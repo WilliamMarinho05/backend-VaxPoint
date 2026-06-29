@@ -11,7 +11,7 @@ const petRoutes = require('./routes/petRoutes');
 const infoRoutes = require('./routes/infoRoutes');
 const historicoRoutes = require('./routes/historicRoutes');
 const vaccinationRoutes = require('./routes/vaccineRoutes');
-
+const campaignRoutes = require('./routes/campaignRoutes'); 
 
 const app = express();
 app.use(cors());
@@ -22,6 +22,7 @@ app.use('/api/pets', petRoutes);
 app.use('/api/info', infoRoutes);
 app.use('/api/historico', historicoRoutes);
 app.use('/api/vaccination', vaccinationRoutes);
+app.use('/api/campaigns', campaignRoutes);
 
 // 2. FUNÇÃO AUTOMÁTICA DE STARTUP
 async function iniciarSistema() {

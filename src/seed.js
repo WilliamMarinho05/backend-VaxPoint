@@ -78,7 +78,8 @@ async function popularBanco() {
         console.log("📦 Abastecendo estoques das UBS...");
         await db.run(`
             INSERT OR IGNORE INTO estoque_postos (id_posto, id_vacina, quantidade) VALUES
-            (1, 3, 50),  (1, 4, 120),
+            (1, 3, 50),  (1, 1, 50),
+            (1, 2, 50),  (1, 4, 120),
             (2, 3, 30),  (2, 4, 80),
             (3, 3, 15),  (3, 4, 200),
             (4, 3, 90),  (4, 4, 150),
@@ -101,7 +102,7 @@ async function popularBanco() {
         console.log("🔗 Vinculando postos às campanhas...");
         await db.run(`
             INSERT OR IGNORE INTO campanha_postos (id_campanha, id_posto) VALUES
-            (1, 1), (1, 2), (1, 6), (1, 11), (1, 13),
+            (1, 1), (1, 2), (1, 3), (1, 6), (1, 11), (1, 13),
             (2, 1), (2, 2), (2, 3), (2, 4), (2, 5), (2, 6), (2, 7), (2, 8), (2, 9), (2, 10), (2, 11), (2, 12), (2, 13), (2, 14), (2, 15),
             (3, 3), (3, 4), (3, 7), (3, 12), (3, 15)
         `);
