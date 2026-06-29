@@ -133,13 +133,13 @@ async function popularBanco() {
         // Administrador
         await db.run(`
             INSERT OR IGNORE INTO usuarios (id_usuario, nome, email, senha, data_nascimento, sexo, is_admin)
-            VALUES (1, 'admin', 'admin@vaxpoint.com', ?, '1985-06', 'Homem', 1)
+            VALUES (1, 'admin', 'admin@vaxpoint.com', ?, '1985-06-06', 'Homem', 1)
         `, [senhaHash]);
 
         // Usuário comum
         const resUser = await db.run(`
             INSERT OR IGNORE INTO usuarios (nome, email, senha, data_nascimento, sexo, is_admin)
-            VALUES ('Maria Clara', 'xxx@gmail.com', ?, '2002-04', 'Mulher', 0)
+            VALUES ('Maria Clara', 'xxx@gmail.com', ?, '2002-04-04', 'Mulher', 0)
         `, [senhaHash]);
         const idUsuario = resUser.lastID;
 
