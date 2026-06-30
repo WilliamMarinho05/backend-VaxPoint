@@ -12,6 +12,7 @@ const infoRoutes = require('./routes/infoRoutes');
 const historicoRoutes = require('./routes/historicRoutes'); 
 const vaccinationRoutes = require('./routes/vaccineRoutes');
 const campaignRoutes = require('./routes/campaignRoutes');
+const adminRoutes = require('./routes/adminRoutes');
 
 const app = express();
 
@@ -25,6 +26,7 @@ app.use('/api/info', infoRoutes);
 app.use('/api/historico', historicoRoutes);
 app.use('/api/vaccination', vaccinationRoutes);
 app.use('/api/campaigns', campaignRoutes);
+app.use('/api/admin', adminRoutes);
 
 async function iniciarSistema() {
     try {
