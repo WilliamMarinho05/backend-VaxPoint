@@ -7,33 +7,42 @@ const { openDb } = require('../database');
 // Aplica os middlewares em TODAS as rotas deste arquivo
 router.use(auth, requireAdmin);
 
+function montarFiltroRegiao(regiao, alias = "postos") {
+    let filtro = "";
+    let params = [];
+
+    if (regiao === "Norte") {
+        filtro = `AND ${alias}.id_posto IN (1,2,3)`;
+    }
+    else if (regiao === "Sul") {
+        filtro = `AND ${alias}.id_posto IN (4,5,6,7,8,9,10,11,12,13,14,15)`;
+    }
+    else if (regiao && !isNaN(regiao)) {
+        filtro = `AND ${alias}.id_posto = ?`;
+        params.push(Number(regiao));
+    }
+
+    return { filtro, params };
+}
+
 // ROTA 1: Obter Métricas dos Cards (Total aplicadas, Estoque, etc.)
 router.get('/metrics', async (req, res) => {
     try {
         const { regiao } = req.query; 
         const db = await openDb();
 
-        // Lógica de filtro geográfico para usar nas queries
-        let postoFilter = "";
-        let params = [];
-        if (regiao === 'Norte' || regiao === 'Sul') {
-            postoFilter = "WHERE postos.endereco LIKE ?";
-            params.push(`%${regiao}%`);
-        } else if (regiao && !isNaN(regiao)) { // É um ID de posto específico
-            postoFilter = "WHERE postos.id_posto = ?";
-            params.push(Number(regiao));
-        }
+        const { filtro, params } = montarFiltroRegiao(regiao, "postos");
 
         // 1. Total de usuários ativos (Geral, independe de posto)
         const usuariosData = await db.get(`SELECT COUNT(*) as total FROM usuarios`);
 
         // 2. Doses aplicadas (Usando histórico pet que possui id_posto)
-        // Nota: O histórico humano no seu DB atual não salva id_posto. Usaremos o pet + intenções ou apenas pet como exemplo local.
         const dosesPet = await db.get(`
             SELECT COUNT(*) as total 
             FROM historico_vacinas_pet hvp
             LEFT JOIN postos ON hvp.id_posto = postos.id_posto
-            ${postoFilter}
+            WHERE 1=1
+            ${filtro}
         `, params);
 
         // 3. Alertas de Estoque (Vacinas com menos de 20 doses)
@@ -41,7 +50,9 @@ router.get('/metrics', async (req, res) => {
             SELECT COUNT(*) as total 
             FROM estoque_postos ep
             LEFT JOIN postos ON ep.id_posto = postos.id_posto
-            ${postoFilter ? postoFilter + " AND " : "WHERE "} ep.quantidade < 20
+            WHERE 1=1
+            ${filtro}
+            AND ep.quantidade < 20
         `, params);
 
         res.json({
@@ -54,47 +65,51 @@ router.get('/metrics', async (req, res) => {
     }
 });
 
-// ROTA 2: Obter dados do Gráfico de Vacinas (Quantidades aplicadas por tipo)
 router.get('/chart/vacinas', async (req, res) => {
     try {
-        const { regiao } = req.query;
         const db = await openDb();
 
-        let postoFilter = "";
-        let params = [];
-        if (regiao === 'Norte' || regiao === 'Sul') {
-            postoFilter = "AND p.endereco LIKE ?";
-            params.push(`%${regiao}%`);
-        } else if (regiao && !isNaN(regiao)) {
-            postoFilter = "AND p.id_posto = ?";
-            params.push(Number(regiao));
-        }
+        const dados = await db.all(`
+            SELECT 
+                v.id_vacina,
+                v.nome_vacina AS nome,
 
-        // Busca o total por vacina
-        const dadosVacinas = await db.all(`
-            SELECT v.nome_vacina as nome, COUNT(hvp.id_historico) as quantidade
+                COALESCE(estoque.total_estoque, 0) AS estoque,
+                COALESCE(aplicacoes.total_aplicadas, 0) AS aplicadas
+
             FROM vacinas v
-            LEFT JOIN historico_vacinas_pet hvp ON v.id_vacina = hvp.id_vacina
-            LEFT JOIN postos p ON hvp.id_posto = p.id_posto
-            WHERE 1=1 ${postoFilter}
-            GROUP BY v.id_vacina
-            ORDER BY quantidade DESC
-        `, params);
 
-        // Calcula a porcentagem para o frontend
-        const totalGeral = dadosVacinas.reduce((acc, curr) => acc + curr.quantidade, 0);
-        const cores = ["#10b981", "#007bff", "#f59e0b", "#ec4899"]; // Cores do seu front
+            LEFT JOIN (
+                SELECT id_vacina, SUM(quantidade) AS total_estoque
+                FROM estoque_postos
+                GROUP BY id_vacina
+            ) estoque ON estoque.id_vacina = v.id_vacina
 
-        const respostaFormatada = dadosVacinas.map((item, index) => ({
+            LEFT JOIN (
+                SELECT id_vacina, COUNT(*) AS total_aplicadas
+                FROM historico_vacinas_pet
+                GROUP BY id_vacina
+            ) aplicacoes ON aplicacoes.id_vacina = v.id_vacina
+
+            WHERE v.tipo IN ('Cachorro', 'Gato')
+
+            ORDER BY estoque DESC
+        `);
+
+        const cores = ["#10b981", "#007bff", "#f59e0b", "#ec4899"];
+
+        const resposta = dados.map((item, index) => ({
             nome: item.nome,
-            quantidade: item.quantidade,
-            porcentagem: totalGeral > 0 ? Math.round((item.quantidade / totalGeral) * 100) : 0,
+            estoque: Number(item.estoque),
+            aplicadas: Number(item.aplicadas),
             cor: cores[index % cores.length]
         }));
 
-        res.json(respostaFormatada);
+        res.json(resposta);
+
     } catch (error) {
-        res.status(500).json({ error: "Erro ao buscar dados do gráfico" });
+        console.error(error);
+        res.status(500).json({ error: "Erro ao buscar estoque" });
     }
 });
 
@@ -118,53 +133,7 @@ router.post('/estoque', async (req, res) => {
     }
 });
 
-// ROTA 4: Obter dados do Gráfico de Conversão (Intenção vs Aplicação)
-router.get('/chart/conversao', async (req, res) => {
-    try {
-        const { regiao } = req.query;
-        const db = await openDb();
-
-        let postoFilter = "";
-        let params = [];
-
-        if (regiao === 'Norte' || regiao === 'Sul') {
-            postoFilter = "AND p.endereco LIKE ?";
-            params.push(`%${regiao}%`);
-        } else if (regiao && !isNaN(regiao)) {
-            postoFilter = "AND p.id_posto = ?";
-            params.push(Number(regiao));
-        }
-
-        // 🔥 AGORA SÓ USAMOS APLICAÇÕES (DADOS CONFIÁVEIS)
-        const dados = await db.all(`
-            SELECT 
-                v.nome_vacina as nome,
-                COUNT(hvp.id_historico) as aplicacoes
-            FROM vacinas v
-            LEFT JOIN historico_vacinas_pet hvp ON v.id_vacina = hvp.id_vacina
-            LEFT JOIN postos p ON hvp.id_posto = p.id_posto
-            WHERE 1=1 ${postoFilter}
-            GROUP BY v.id_vacina
-            HAVING aplicacoes > 0
-            ORDER BY aplicacoes DESC
-            LIMIT 6
-        `, params);
-
-        // 📊 formato simples pro front
-        const resposta = dados.map(v => ({
-            nome: v.nome,
-            aplicacoes: v.aplicacoes
-        }));
-
-        res.json(resposta);
-
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: "Erro ao buscar conversão" });
-    }
-});
-
-// ROTA 5: Buscar todos os Postos (Para o Select do formulário)
+// ROTA 4: Buscar todos os Postos (Para o Select do formulário)
 router.get('/postos', async (req, res) => {
     try {
         const db = await openDb();
@@ -177,7 +146,7 @@ router.get('/postos', async (req, res) => {
 
 
 
-// ROTA 6: Buscar todas as Vacinas (Para o Select do formulário)
+// ROTA 5: Buscar todas as Vacinas (Para o Select do formulário)
 router.get('/vacinas', async (req, res) => {
     try {
         const db = await openDb();
@@ -188,7 +157,7 @@ router.get('/vacinas', async (req, res) => {
     }
 });
 
-// ROTA 7: Criar Nova Campanha Relacional (Tabelas: campanhas e campanha_postos)
+// ROTA 6: Criar Nova Campanha Relacional (Tabelas: campanhas e campanha_postos)
 router.post('/campanha', async (req, res) => {
     try {
         const { id_vacina, titulo, publico, periodo, descricao, imagem_url, destaque, ids_postos } = req.body;
