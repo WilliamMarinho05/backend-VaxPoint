@@ -56,7 +56,11 @@ async function popularBanco() {
             (1, 'Antirrábica', 'Cachorro', 'Vacina anual contra a raiva para cães e gatos', 1),
             (2, 'Quádrupla Felina (V4)', 'Gato', 'Protege gatos contra panleucopenia, calicivirose, rinotraqueíte e clamidiose', 2),
             (3, 'Tríplice Viral', 'Humano', 'Protege contra Sarampo, Caxumba e Rubéola', 2),
-            (4, 'Influenza (Gripe)', 'Humano', 'Vacina anual de proteção sazonal contra a gripe', 1)
+            (4, 'Influenza (Gripe)', 'Humano', 'Vacina anual de proteção sazonal contra a gripe', 1),
+            (5, 'Hepatite B', 'Humano', 'Protege contra a infecção causada pelo vírus da hepatite B', 3),
+            (6, 'dT (Dupla Adulto)', 'Humano', 'Protege contra difteria e tétano, com reforço periódico', 3),
+            (7, 'V10 Canina', 'Cachorro', 'Protege cães contra cinomose, parvovirose, hepatite infecciosa, leptospirose e outras doenças', 3),
+            (8, 'Antirrábica Felina', 'Gato', 'Vacina anual contra a raiva para gatos', 1)
         `);
 
         // ==========================================
@@ -67,9 +71,15 @@ async function popularBanco() {
             INSERT OR IGNORE INTO campanhas
             (id_campanha, id_vacina, titulo, publico, periodo, descricao, imagem_url, destaque)
             VALUES
-            (1, 1, 'Campanha Antirrábica Cães 2026', 'Cachorro', '01 de Junho a 30 de Junho', 'Proteja o seu melhor amigo contra a raiva!', 'https://images.unsplash.com/photo-1581888227599-779811939961?auto=format&fit=crop&w=1200&q=80', 0),
-            (2, 4, 'Mobilização Contra a Gripe (Influenza)', 'Humano', 'Permanente', 'Campanha de imunização anual para toda a população.', 'https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&w=1200&q=80', 0),
-            (3, 2, 'Campanha Antirrábica Gatos 2026', 'Gato', '15 de Julho a 31 de Agosto', 'Mantenha seu felino seguro e saudável.', 'https://images.unsplash.com/photo-1584515933487-779824d29309?auto=format&fit=crop&w=1200&q=80', 0)
+            (1, 1, 'Campanha Antirrábica Cães 2026', 'Cachorro', '01 de Junho a 30 de Junho', 'Proteja o seu melhor amigo contra a raiva!', 'https://plus.unsplash.com/premium_photo-1726768886710-92e78c6272df?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', 0),
+            (2, 4, 'Mobilização Contra a Gripe (Influenza)', 'Humano', 'Permanente', 'Campanha de imunização anual para toda a população.', 'https://images.unsplash.com/photo-1636483022085-c9d3c580c6f5?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', 0),
+            (3, 2, 'Campanha Antirrábica Gatos 2026', 'Gato', '15 de Julho a 31 de Agosto', 'Mantenha seu felino seguro e saudável.', 'https://images.unsplash.com/photo-1596272875729-ed2ff7d6d9c5?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', 0),
+
+            (4, 3, 'Dia D da Tríplice Viral', 'Humano', '01 de Setembro a 30 de Setembro', 'Atualize sua caderneta e fortaleça a proteção contra sarampo, caxumba e rubéola.', 'https://plus.unsplash.com/premium_photo-1702598710322-36b0cf8b0ca9?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', 1),
+            (5, 5, 'Campanha de Vacinação contra Hepatite B', 'Humano', '01 de Outubro a 31 de Outubro', 'Imunização gratuita para ampliar a cobertura vacinal contra Hepatite B.', 'https://images.unsplash.com/photo-1576765974257-b414b9ea0051?q=80&w=878&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', 0),
+            (6, 6, 'Proteção Contra Tétano e Difteria', 'Humano', '01 de Novembro a 30 de Novembro', 'Mantenha seu reforço vacinal em dia e proteja-se contra tétano e difteria.', 'https://plus.unsplash.com/premium_photo-1661503234694-b3bc8f62cb8a?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', 0),
+            (7, 7, 'Mutirão de Vacinação V10 Canina', 'Cachorro', '01 de Dezembro a 31 de Dezembro', 'Garanta a proteção do seu cão contra as principais doenças infecciosas.', 'https://plus.unsplash.com/premium_photo-1702599108828-60a346aa202e?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', 0),
+            (8, 8, 'Vacinação Antirrábica Felina 2027', 'Gato', '01 de Janeiro a 31 de Janeiro', 'Leve seu gato para receber a vacina antirrábica e mantê-lo protegido.', 'https://plus.unsplash.com/premium_photo-1663047516102-440a3a081b1b?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', 1)
         `);
 
         // ==========================================
@@ -78,22 +88,51 @@ async function popularBanco() {
         console.log("📦 Abastecendo estoques das UBS...");
         await db.run(`
             INSERT OR IGNORE INTO estoque_postos (id_posto, id_vacina, quantidade) VALUES
-            (1, 3, 50),  (1, 1, 50),
-            (1, 2, 50),  (1, 4, 120),
-            (2, 3, 30),  (2, 4, 80),
-            (3, 3, 15),  (3, 4, 200),
-            (4, 3, 90),  (4, 4, 150),
-            (5, 3, 40),  (5, 4, 60),
-            (6, 3, 0),   (6, 4, 110),
-            (7, 3, 75),  (7, 4, 95),
-            (8, 3, 100), (8, 4, 130),
-            (9, 3, 20),  (9, 4, 45),
-            (10, 3, 65), (10, 4, 85),
-            (11, 3, 110),(11, 4, 140),
-            (12, 3, 55), (12, 4, 175),
-            (13, 3, 40), (13, 4, 90),
-            (14, 3, 25), (14, 4, 105),
-            (15, 3, 85), (15, 4, 160)
+
+            -- USF 307 Norte
+            (1,3,80),(1,4,120),(1,5,70),(1,6,40),(1,1,35),
+
+            -- USF 403 Norte
+            (2,3,45),(2,4,90),(2,5,60),(2,7,18),
+
+            -- USF 508 Norte
+            (3,3,20),(3,4,180),(3,6,25),
+
+            -- USF 108 Sul
+            (4,3,95),(4,4,150),(4,5,80),(4,6,55),
+
+            -- USF 210 Sul
+            (5,3,50),(5,4,75),(5,1,22),
+
+            -- USF 403 Sul
+            (6,4,110),(6,5,65),(6,2,15),
+
+            -- USF 1103 Sul
+            (7,3,85),(7,4,95),(7,5,55),(7,8,20),
+
+            -- USF 1304 Sul
+            (8,3,120),(8,4,130),(8,5,90),(8,6,50),(8,7,12),
+
+            -- USF 712 Sul
+            (9,3,30),(9,4,45),
+
+            -- USF 806 Sul
+            (10,3,70),(10,4,90),(10,5,40),
+
+            -- USF Aureny I
+            (11,3,130),(11,4,140),(11,5,100),(11,6,60),(11,1,25),(11,2,12),
+
+            -- USF Aureny III
+            (12,3,65),(12,4,175),(12,5,80),(12,8,18),
+
+            -- USF Taquari
+            (13,3,55),(13,4,100),(13,6,30),
+
+            -- USF Morada do Sol
+            (14,3,40),(14,4,110),(14,5,45),(14,7,20),
+
+            -- USF Bela Vista
+            (15,3,90),(15,4,160),(15,5,75),(15,6,35),(15,1,28),(15,8,14)
         `);
 
         // ==========================================
@@ -102,9 +141,65 @@ async function popularBanco() {
         console.log("🔗 Vinculando postos às campanhas...");
         await db.run(`
             INSERT OR IGNORE INTO campanha_postos (id_campanha, id_posto) VALUES
-            (1, 1), (1, 2), (1, 3), (1, 6), (1, 11), (1, 13),
-            (2, 1), (2, 2), (2, 3), (2, 4), (2, 5), (2, 6), (2, 7), (2, 8), (2, 9), (2, 10), (2, 11), (2, 12), (2, 13), (2, 14), (2, 15),
-            (3, 3), (3, 4), (3, 7), (3, 12), (3, 15)
+
+            -- 1. Campanha Antirrábica Cães 2026 (Vacina 1)
+            (1,1),
+            (1,5),
+            (1,11),
+            (1,15),
+
+            -- 2. Mobilização Contra a Gripe (Vacina 4)
+            (2,1),
+            (2,2),
+            (2,4),
+            (2,6),
+            (2,8),
+            (2,10),
+            (2,11),
+            (2,12),
+            (2,15),
+
+            -- 3. Campanha Antirrábica Gatos 2026 (Vacina 2)
+            (3,6),
+            (3,11),
+
+            -- 4. Dia D da Tríplice Viral (Vacina 3)
+            (4,1),
+            (4,4),
+            (4,7),
+            (4,8),
+            (4,11),
+            (4,13),
+            (4,15),
+
+            -- 5. Campanha Hepatite B (Vacina 5)
+            (5,1),
+            (5,4),
+            (5,6),
+            (5,8),
+            (5,10),
+            (5,11),
+            (5,12),
+            (5,15),
+
+            -- 6. Proteção Contra Tétano e Difteria (Vacina 6)
+            (6,1),
+            (6,3),
+            (6,4),
+            (6,8),
+            (6,11),
+            (6,13),
+            (6,15),
+
+            -- 7. Mutirão V10 Canina (Vacina 7)
+            (7,2),
+            (7,8),
+            (7,14),
+
+            -- 8. Vacinação Antirrábica Felina 2027 (Vacina 8)
+            (8,7),
+            (8,12),
+            (8,15)
         `);
 
         // ==========================================
@@ -119,10 +214,12 @@ async function popularBanco() {
             (4, 'Pinscher', 'Cachorro'),
             (5, 'Labrador', 'Cachorro'),
             (6, 'Golden Retriever', 'Cachorro'),
-            (7, 'Sem Raça Definida (SRD)', 'Gato'),
-            (8, 'Persa', 'Gato'),
-            (9, 'Siamês', 'Gato'),
-            (10, 'Angorá', 'Gato')
+            (7, 'Outro', 'Cachorro'),
+            (8, 'Sem Raça Definida (SRD)', 'Gato'),
+            (9, 'Persa', 'Gato'),
+            (10, 'Siamês', 'Gato'),
+            (11, 'Angorá', 'Gato'),
+            (12, 'Outro', 'Gato')
         `);
 
         // ==========================================

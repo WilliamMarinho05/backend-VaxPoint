@@ -3,6 +3,8 @@ const express = require('express');
 const router = express.Router();
 const { openDb } = require('../database');
 const bcrypt = require('bcrypt');
+require('dotenv').config();
+const jwt = require('jsonwebtoken');
 
 // =======================================================
 // ROTA DE CADASTRO (Atualizada com dados de saúde)
@@ -67,9 +69,22 @@ router.post('/login', async (req, res) => {
             const senhaCorreta = await bcrypt.compare(senha, usuario.senha);
 
             if (senhaCorreta) {
-                // Segurança crucial: nunca devolva o hash da senha para o cliente
-                delete usuario.senha; 
-                res.json({ auth: true, usuario });
+                const token = jwt.sign(
+                    {
+                        id: usuario.id_usuario,
+                        is_admin: usuario.is_admin
+                    },
+                    process.env.JWT_SECRET,
+                    { expiresIn: process.env.JWT_EXPIRES_IN }
+                );
+
+                delete usuario.senha;
+
+                return res.json({
+                    auth: true,
+                    token,
+                    usuario
+                });
             } else {
                 res.status(401).json({ auth: false, message: "E-mail ou senha inválidos" });
             }

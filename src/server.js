@@ -2,21 +2,23 @@
 const express = require('express');
 const cors = require('cors');
 const { initDb } = require('./database');
-const popularBanco = require('./seed'); // 1. IMPORTA O SEED AQUI
+const popularBanco = require('./seed');
 
 require('dotenv').config();
 
 const authRoutes = require('./routes/authRoutes');
 const petRoutes = require('./routes/petRoutes');
 const infoRoutes = require('./routes/infoRoutes');
-const historicoRoutes = require('./routes/historicRoutes');
+const historicoRoutes = require('./routes/historicRoutes'); 
 const vaccinationRoutes = require('./routes/vaccineRoutes');
-const campaignRoutes = require('./routes/campaignRoutes'); 
+const campaignRoutes = require('./routes/campaignRoutes');
 
 const app = express();
+
 app.use(cors());
 app.use(express.json());
 
+// ROTAS (server NÃO valida admin aqui)
 app.use('/api/auth', authRoutes);
 app.use('/api/pets', petRoutes);
 app.use('/api/info', infoRoutes);
@@ -24,24 +26,20 @@ app.use('/api/historico', historicoRoutes);
 app.use('/api/vaccination', vaccinationRoutes);
 app.use('/api/campaigns', campaignRoutes);
 
-// 2. FUNÇÃO AUTOMÁTICA DE STARTUP
 async function iniciarSistema() {
     try {
-        // Primeiro: Garante que as tabelas existem
-        await initDb(); 
-        
-        // Segundo: Roda a verificação de dados do seed automaticamente
-        await popularBanco(); 
+        await initDb();
+        await popularBanco();
 
-        // Terceiro: Abre a porta do servidor para o Postman / Frontend
         const PORT = process.env.PORT || 3000;
+
         app.listen(PORT, () => {
-            console.log(`🚀 Servidor VaxPoint rodando na porta ${PORT}`);
+            console.log(`🚀 Servidor rodando na porta ${PORT}`);
         });
+
     } catch (error) {
-        console.error("❌ Erro crítico ao iniciar o sistema:", error);
+        console.error("Erro ao iniciar sistema:", error);
     }
 }
 
-// Executa o fluxo automático completo
 iniciarSistema();

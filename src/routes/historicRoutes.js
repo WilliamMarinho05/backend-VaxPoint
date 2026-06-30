@@ -2,16 +2,21 @@
 const express = require('express');
 const router = express.Router();
 const { openDb } = require('../database');
+const auth = require('../middlewares/auth');
 
 // Registrar uma vacina tomada ou planejada
-router.post('/', async (req, res) => {
-    const { id_usuario, id_pet, id_vacina, data_prevista, status } = req.body;
+router.post('/', auth, async (req, res) => {
+    const id_usuario = req.user.id;
+    const { id_pet, id_vacina, data_prevista, status } = req.body;
+
     try {
         const db = await openDb();
+
         await db.run(
             'INSERT INTO historico_vacinacao (id_usuario, id_pet, id_vacina, data_prevista, status) VALUES (?, ?, ?, ?, ?)',
             [id_usuario, id_pet || null, id_vacina, data_prevista, status]
         );
+
         res.status(201).json({ success: true, message: "Registro adicionado ao diário!" });
     } catch (error) {
         res.status(500).json({ success: false, message: "Erro ao registrar vacina." });
@@ -19,9 +24,12 @@ router.post('/', async (req, res) => {
 });
 
 // Buscar histórico unificado do usuário e de seus pets
-router.get('/:idUsuario', async (req, res) => {
+router.get('/', auth, async (req, res) => {
+    const id_usuario = req.user.id;
+
     try {
         const db = await openDb();
+
         const historico = await db.all(`
             SELECT 
                 h.id_historico, h.data_prevista, h.status,
@@ -32,8 +40,8 @@ router.get('/:idUsuario', async (req, res) => {
             LEFT JOIN pets p ON h.id_pet = p.id_pet
             WHERE h.id_usuario = ?
             ORDER BY h.data_prevista DESC
-        `, [req.params.idUsuario]);
-        
+        `, [id_usuario]);
+
         res.json(historico);
     } catch (error) {
         res.status(500).json({ success: false, message: "Erro ao buscar histórico." });
