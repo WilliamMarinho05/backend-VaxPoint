@@ -60,7 +60,7 @@ async function popularBanco() {
             (5, 'Hepatite B', 'Humano', 'Protege contra a infecção causada pelo vírus da hepatite B', 3),
             (6, 'dT (Dupla Adulto)', 'Humano', 'Protege contra difteria e tétano, com reforço periódico', 3),
             (7, 'V10 Canina', 'Cachorro', 'Protege cães contra cinomose, parvovirose, hepatite infecciosa, leptospirose e outras doenças', 3),
-            (8, 'Antirrábica Felina', 'Gato', 'Vacina anual contra a raiva para gatos', 1)
+            (8, 'Raiva', 'Gato', 'Vacina anual contra a raiva para gatos', 1)
         `);
 
         // ==========================================
@@ -71,15 +71,15 @@ async function popularBanco() {
             INSERT OR IGNORE INTO campanhas
             (id_campanha, id_vacina, titulo, publico, periodo, descricao, imagem_url, destaque)
             VALUES
-            (1, 1, 'Campanha Antirrábica Cães 2026', 'Cachorro', '01 de Junho a 30 de Junho', 'Proteja o seu melhor amigo contra a raiva!', 'https://plus.unsplash.com/premium_photo-1726768886710-92e78c6272df?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', 0),
-            (2, 4, 'Mobilização Contra a Gripe (Influenza)', 'Humano', 'Permanente', 'Campanha de imunização anual para toda a população.', 'https://images.unsplash.com/photo-1636483022085-c9d3c580c6f5?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', 0),
-            (3, 2, 'Campanha Antirrábica Gatos 2026', 'Gato', '15 de Julho a 31 de Agosto', 'Mantenha seu felino seguro e saudável.', 'https://images.unsplash.com/photo-1596272875729-ed2ff7d6d9c5?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', 0),
+            (1, 1, 'Campanha Antirrábica Cães 2026', 'Cachorro', '01 de Junho a 30 de Junho', 'Proteção contra raiva • Vacinação gratuita para cães • Importante para saúde pública e prevenção de zoonoses', 'https://plus.unsplash.com/premium_photo-1726768886710-92e78c6272df?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', 0),
+            (2, 4, 'Mobilização Contra a Gripe (Influenza)', 'Humano', 'Permanente', 'Imunização contra Influenza • Campanha anual • Proteção para grupos prioritários e população geral', 'https://images.unsplash.com/photo-1636483022085-c9d3c580c6f5?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', 0),
+            (3, 2, 'Campanha de Raiva para Gatos 2026', 'Gato', '15 de Julho a 31 de Agosto', 'Proteção contra raiva felina • Vacinação essencial para gatos • Redução de riscos de transmissão', 'https://images.unsplash.com/photo-1596272875729-ed2ff7d6d9c5?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', 0),
 
-            (4, 3, 'Dia D da Tríplice Viral', 'Humano', '01 de Setembro a 30 de Setembro', 'Atualize sua caderneta e fortaleça a proteção contra sarampo, caxumba e rubéola.', 'https://plus.unsplash.com/premium_photo-1702598710322-36b0cf8b0ca9?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', 1),
-            (5, 5, 'Campanha de Vacinação contra Hepatite B', 'Humano', '01 de Outubro a 31 de Outubro', 'Imunização gratuita para ampliar a cobertura vacinal contra Hepatite B.', 'https://images.unsplash.com/photo-1576765974257-b414b9ea0051?q=80&w=878&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', 0),
-            (6, 6, 'Proteção Contra Tétano e Difteria', 'Humano', '01 de Novembro a 30 de Novembro', 'Mantenha seu reforço vacinal em dia e proteja-se contra tétano e difteria.', 'https://plus.unsplash.com/premium_photo-1661503234694-b3bc8f62cb8a?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', 0),
-            (7, 7, 'Mutirão de Vacinação V10 Canina', 'Cachorro', '01 de Dezembro a 31 de Dezembro', 'Garanta a proteção do seu cão contra as principais doenças infecciosas.', 'https://plus.unsplash.com/premium_photo-1702599108828-60a346aa202e?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', 0),
-            (8, 8, 'Vacinação Antirrábica Felina 2027', 'Gato', '01 de Janeiro a 31 de Janeiro', 'Leve seu gato para receber a vacina antirrábica e mantê-lo protegido.', 'https://plus.unsplash.com/premium_photo-1663047516102-440a3a081b1b?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', 1)
+            (4, 3, 'Dia D da Tríplice Viral', 'Humano', '01 de Setembro a 30 de Setembro', 'Atualização vacinal • Tríplice Viral (sarampo, caxumba e rubéola) • Reforço da imunidade em todas as idades', 'https://plus.unsplash.com/premium_photo-1702598710322-36b0cf8b0ca9?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', 1),
+            (5, 5, 'Campanha de Vacinação contra Hepatite B', 'Humano', '01 de Outubro a 31 de Outubro', 'Vacinação contra Hepatite B • Imunização gratuita • Prevenção de doenças hepáticas graves', 'https://images.unsplash.com/photo-1576765974257-b414b9ea0051?q=80&w=878&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', 0),
+            (6, 6, 'Proteção Contra Tétano e Difteria', 'Humano', '01 de Novembro a 30 de Novembro', 'Reforço vacinal • Tétano e Difteria • Proteção contínua para adultos e jovens', 'https://plus.unsplash.com/premium_photo-1661503234694-b3bc8f62cb8a?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', 0),
+            (7, 7, 'Mutirão de Vacinação V10 Canina', 'Cachorro', '01 de Dezembro a 31 de Dezembro', 'Vacinação V10 canina • Proteção ampliada contra doenças infecciosas • Essencial para cães', 'https://plus.unsplash.com/premium_photo-1702599108828-60a346aa202e?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', 0),
+            (8, 8, 'Mutirão de Vacinação Quádrupla Felina (V4)', 'Gato', '01 de Janeiro a 31 de Janeiro', 'Vacinação V4 felina • Proteção contra principais doenças virais • Saúde preventiva para gatos', 'https://plus.unsplash.com/premium_photo-1663047516102-440a3a081b1b?q=80&w=870&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D', 1)
         `);
 
         // ==========================================
@@ -214,12 +214,12 @@ async function popularBanco() {
             (4, 'Pinscher', 'Cachorro'),
             (5, 'Labrador', 'Cachorro'),
             (6, 'Golden Retriever', 'Cachorro'),
-            (7, 'Outro', 'Cachorro'),
+            (7, 'Outros', 'Cachorro'),
             (8, 'Sem Raça Definida (SRD)', 'Gato'),
             (9, 'Persa', 'Gato'),
             (10, 'Siamês', 'Gato'),
             (11, 'Angorá', 'Gato'),
-            (12, 'Outro', 'Gato')
+            (12, 'Outros', 'Gato')
         `);
 
         // ==========================================
@@ -237,7 +237,7 @@ async function popularBanco() {
         // Usuário comum
         const resUser = await db.run(`
             INSERT OR IGNORE INTO usuarios (nome, email, senha, data_nascimento, sexo, is_admin)
-            VALUES ('Maria Clara', 'xxx@gmail.com', ?, '2002-04-04', 'Mulher', 0)
+            VALUES ('Maria Clara', 'maria@gmail.com', ?, '2002-04-04', 'Mulher', 0)
         `, [senhaHash]);
         const idUsuario = resUser.lastID;
 
@@ -247,9 +247,17 @@ async function popularBanco() {
         console.log("🐶 Cadastrando pet vinculado à Maria Clara...");
         const resPet = await db.run(`
             INSERT OR IGNORE INTO pets (nome, especie, id_raca, porte, peso, sexo, data_nascimento, numero_microchip, foto_url, id_usuario)
-            VALUES ('Pipoca', 'Cachorro', 2, 'Médio', 12.5, 'Macho', '2023-08', '900111000222', null, ?)
+            VALUES 
+            ('Pipoca', 'Cachorro', 4, 'Médio', 12.5, 'Macho', '2023-08', '900111000222', null, ?)
         `, [idUsuario]);
         const idPet = resPet.lastID;
+
+        const resPetCat = await db.run(`
+            INSERT OR IGNORE INTO pets (nome, especie, id_raca, porte, peso, sexo, data_nascimento, numero_microchip, foto_url, id_usuario)
+            VALUES 
+            ('Miau', 'Gato', 12, 'Médio', 7.5, 'Macho', '2023-10', '900111000333', null, ?)
+        `, [idUsuario]);
+        const idPetCat = resPetCat.lastID;
 
         // ==========================================
         // 9. HISTÓRICO DE VACINAÇÃO HUMANA
